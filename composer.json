@@ -1,0 +1,13 @@
+{
+  "name": "corviz/twig-layout-service",
+  "description": "Twig layout engine service provider for Corviz/framework",
+  "require": {
+    "corviz/framework": "*@alpha",
+    "twig/twig": "~2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Corviz\\LayoutEngine\\Twig\\": "./src"
+    }
+  }
+}
