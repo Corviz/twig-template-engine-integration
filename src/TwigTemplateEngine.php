@@ -8,6 +8,11 @@ use Corviz\Mvc\View\TemplateEngine;
 class TwigTemplateEngine implements TemplateEngine
 {
     /**
+     * @var bool
+     */
+    private static $cacheEnabled = true;
+
+    /**
      * @var string
      */
     private $cachePath;
@@ -16,6 +21,22 @@ class TwigTemplateEngine implements TemplateEngine
      * @var \Twig_Environment
      */
     private $twig;
+
+    /**
+     * Disables caching.
+     */
+    public static function disableCache()
+    {
+        self::$cacheEnabled = false;
+    }
+
+    /**
+     * Enables caching.
+     */
+    public static function enableCache()
+    {
+        self::$cacheEnabled = true;
+    }
 
     /**
      * Process and render a template.
@@ -35,6 +56,32 @@ class TwigTemplateEngine implements TemplateEngine
     }
 
     /**
+     * @param string $templatesPath
+     *
+     * @throws \Exception
+     */
+    private function createCache(string $templatesPath)
+    {
+        //Doesn't attempt to create caching dir when not required
+        if (!self::$cacheEnabled)
+            return;
+
+        //If no cache is set, attempt to create one
+        if (empty($this->cachePath)) {
+            $this->cachePath = "{$templatesPath}/cache/twig";
+            if (!is_dir($this->cachePath)) {
+                if (!mkdir($this->cachePath, 0777, true)) {
+                    throw new \Exception('Could not setup twig cache');
+                }
+            }
+        }
+
+        if (!is_dir($this->cachePath) || !is_writable($this->cachePath)) {
+            throw new \Exception('Invalid cache');
+        }
+    }
+
+    /**
      * @return string
      */
     private function getAppDirectory()
@@ -50,23 +97,11 @@ class TwigTemplateEngine implements TemplateEngine
         $appPath = $this->getAppDirectory();
         $templatesPath = "{$appPath}views";
 
-        //If no cache is set, attempt to create one
-        if (empty($this->cachePath)) {
-            $this->cachePath = "{$templatesPath}/cache/twig";
-            if (!is_dir($this->cachePath)) {
-                if (!mkdir($this->cachePath, 0777, true)) {
-                    throw new \Exception('Could not setup twig cache');
-                }
-            }
-        }
-
-        if (!is_dir($this->cachePath) || !is_writable($this->cachePath)) {
-            throw new \Exception('Invalid cache');
-        }
+        $this->createCache($templatesPath);
 
         $loader = new \Twig_Loader_Filesystem($templatesPath);
         $this->twig = new \Twig_Environment($loader, [
-            'cache' => $this->cachePath,
+            'cache' => self::$cacheEnabled ? $this->cachePath : false,
         ]);
     }
 
