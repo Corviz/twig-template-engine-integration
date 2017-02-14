@@ -31,7 +31,7 @@ class TwigTemplateEngine implements TemplateEngine
         $this->isInitialized() || $this->initialize();
 
         $file = substr($file, strlen($this->getAppDirectory().'views/'));
-        $this->twig->render($file, $data);
+        return $this->twig->render($file, $data);
     }
 
     /**
@@ -75,6 +75,6 @@ class TwigTemplateEngine implements TemplateEngine
      */
     private function isInitialized(): bool
     {
-        return empty($this->twig);
+        return !empty($this->twig);
     }
 }
