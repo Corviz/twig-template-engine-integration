@@ -1,6 +1,6 @@
 <?php
 
-namespace Corviz\LayoutEngine\Twig;
+namespace Corviz\TemplateEngine\Twig;
 
 use Corviz\Application;
 use Corviz\Mvc\View\TemplateEngine;
