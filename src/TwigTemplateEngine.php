@@ -4,6 +4,9 @@ namespace Corviz\TemplateEngine\Twig;
 
 use Corviz\Application;
 use Corviz\Mvc\View\TemplateEngine;
+use Exception;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class TwigTemplateEngine implements TemplateEngine
 {
@@ -18,7 +21,7 @@ class TwigTemplateEngine implements TemplateEngine
     private $cachePath;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     private $twig;
 
@@ -58,7 +61,7 @@ class TwigTemplateEngine implements TemplateEngine
     /**
      * @param string $templatesPath
      *
-     * @throws \Exception
+     * @throws Exception
      */
     private function createCache(string $templatesPath)
     {
@@ -71,13 +74,13 @@ class TwigTemplateEngine implements TemplateEngine
             $this->cachePath = "{$templatesPath}/cache/twig";
             if (!is_dir($this->cachePath)) {
                 if (!mkdir($this->cachePath, 0777, true)) {
-                    throw new \Exception('Could not setup twig cache');
+                    throw new Exception('Could not setup twig cache');
                 }
             }
         }
 
         if (!is_dir($this->cachePath) || !is_writable($this->cachePath)) {
-            throw new \Exception('Invalid cache');
+            throw new Exception('Invalid cache');
         }
     }
 
@@ -99,8 +102,8 @@ class TwigTemplateEngine implements TemplateEngine
 
         $this->createCache($templatesPath);
 
-        $loader = new \Twig_Loader_Filesystem($templatesPath);
-        $this->twig = new \Twig_Environment($loader, [
+        $loader = new FilesystemLoader($templatesPath);
+        $this->twig = new Environment($loader, [
             'cache' => self::$cacheEnabled ? $this->cachePath : false,
         ]);
     }

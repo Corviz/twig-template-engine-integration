@@ -3,7 +3,7 @@
   "description": "Twig layout engine service provider for Corviz/framework",
   "require": {
     "corviz/framework": "*@alpha",
-    "twig/twig": "~2.0"
+    "twig/twig": "^3.3"
   },
   "autoload": {
     "psr-4": {
